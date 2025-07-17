@@ -126,7 +126,37 @@ class Inventory:
             reverse=reverse
         )
 
-
+    def purchase_sweet(self, sweet_id: int, quantity: int):
+        """
+        Purchase a sweet by reducing its quantity in stock.
+        
+        Args:
+            sweet_id: ID of the sweet to purchase
+            quantity: Number of items to purchase
+            
+        Raises:
+            KeyError: If sweet with given ID is not found
+            ValueError: If quantity is invalid or insufficient stock
+        """
+        if quantity <= 0:
+            raise ValueError("Quantity must be positive.")
+            
+        sweet = self._find_sweet_by_id(sweet_id)
+        
+        if sweet is None:
+            raise KeyError("Sweet not found.")
+            
+        if sweet.quantity < quantity:
+            raise ValueError("Not enough stock.")
+            
+        sweet.quantity -= quantity
+    
+    def _find_sweet_by_id(self, sweet_id: int) -> Sweet:
+        """Helper method to find sweet by ID"""
+        for sweet in self.sweets:
+            if sweet.id == sweet_id:
+                return sweet
+        return None
 
 if __name__ == '__main__':
     pass
