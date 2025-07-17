@@ -151,6 +151,28 @@ class Inventory:
             
         sweet.quantity -= quantity
     
+    def restock_sweet(self, sweet_id: int, quantity: int):
+        """
+        Restock a sweet by increasing its quantity in stock.
+        
+        Args:
+            sweet_id: ID of the sweet to restock
+            quantity: Number of items to add to stock
+            
+        Raises:
+            KeyError: If sweet with given ID is not found
+            ValueError: If quantity is not positive
+        """
+        if quantity <= 0:
+            raise ValueError("Invalid restock quantity.")
+            
+        sweet = self._find_sweet_by_id(sweet_id)
+        
+        if sweet is None:
+            raise KeyError("Sweet not found.")
+            
+        sweet.quantity += quantity
+    
     def _find_sweet_by_id(self, sweet_id: int) -> Sweet:
         """Helper method to find sweet by ID"""
         for sweet in self.sweets:
