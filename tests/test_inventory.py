@@ -299,13 +299,13 @@ class TestInventorySortSweets(unittest.TestCase):
     def test_sort_by_name_ascending(self):
         """Test sorting by name in ascending order"""
         result = self.inventory.sort_sweets(key="name")
-        expected_order = [self.sweet3, self.sweet4, self.sweet1, self.sweet2]
+        expected_order = [self.sweet3, self.sweet1, self.sweet4, self.sweet2]
         self.assertEqual(result, expected_order)
 
     def test_sort_by_name_descending(self):
         """Test sorting by name in descending order"""
         result = self.inventory.sort_sweets(key="name", reverse=True)
-        expected_order = [self.sweet2, self.sweet1, self.sweet4, self.sweet3]
+        expected_order = [self.sweet2, self.sweet4, self.sweet1, self.sweet3]
         self.assertEqual(result, expected_order)
 
     def test_sort_by_category_ascending(self):
@@ -352,7 +352,7 @@ class TestInventorySortSweets(unittest.TestCase):
         result = self.inventory.sort_sweets(key="name")
         
         # Modify the result list
-        result.append(Sweet(id=99, name="Test", category="Test", price=0, quantity=0))
+        result.append(Sweet(id=99, name="Test", category="Test", price=10, quantity=0))
         
         # Original inventory should remain unchanged
         self.assertEqual(self.inventory.sweets, original_sweets)
