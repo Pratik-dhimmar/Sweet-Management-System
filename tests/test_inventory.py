@@ -202,7 +202,83 @@ class TestInventoryViewAllSweets(unittest.TestCase):
         self.assertEqual(len(self.inventory.view_all_sweets()), 1)
         self.assertNotIn(self.sweet2, self.inventory.view_all_sweets())
 
+class TestInventorySearchSweets(unittest.TestCase):
+    """Test cases for Inventory.search_sweets() method"""
 
+    def setUp(self):
+        """Set up test inventory with sample sweets"""
+        self.inventory = Inventory()
+        
+        # Add test sweets
+        self.sweet1 = Sweet(id=1, name="Chocolate Bar", category="Chocolate", price=2.99, quantity=50)
+        self.sweet2 = Sweet(id=2, name="Dark Chocolate", category="Chocolate", price=3.49, quantity=30)
+        self.sweet3 = Sweet(id=3, name="Gummy Bears", category="Gummies", price=1.99, quantity=100)
+        self.sweet4 = Sweet(id=4, name="Jelly Beans", category="Gummies", price=1.49, quantity=75)
+        self.sweet5 = Sweet(id=5, name="Caramel Bar", category="Caramel", price=2.49, quantity=40)
+        
+        for sweet in [self.sweet1, self.sweet2, self.sweet3, self.sweet4, self.sweet5]:
+            self.inventory.add_sweet(sweet)
+
+    def test_search_with_no_filters(self):
+        """Test search with no filters returns all sweets"""
+        result = self.inventory.search_sweets()
+        self.assertEqual(len(result), 5)
+        self.assertCountEqual(result, [self.sweet1, self.sweet2, self.sweet3, self.sweet4, self.sweet5])
+
+    def test_search_by_name_exact_match(self):
+        """Test search by exact name (case-insensitive)"""
+        result = self.inventory.search_sweets(name="Chocolate Bar")
+        self.assertEqual(len(result), 1)
+        self.assertIn(self.sweet1, result)
+
+    def test_search_by_name_partial_match(self):
+        """Test search by partial name (case-insensitive)"""
+        result = self.inventory.search_sweets(name="choco")
+        self.assertEqual(len(result), 2)
+        self.assertIn(self.sweet1, result)
+        self.assertIn(self.sweet2, result)
+
+    def test_search_by_category(self):
+        """Test search by exact category match"""
+        result = self.inventory.search_sweets(category="Gummies")
+        self.assertEqual(len(result), 2)
+        self.assertIn(self.sweet3, result)
+        self.assertIn(self.sweet4, result)
+
+    def test_search_by_price_range(self):
+        """Test search by price range"""
+        result = self.inventory.search_sweets(min_price=2.00, max_price=3.00)
+        self.assertEqual(len(result), 3)
+        self.assertIn(self.sweet1, result)
+        self.assertIn(self.sweet5, result)
+        self.assertNotIn(self.sweet3, result)
+
+    def test_search_combined_filters(self):
+        """Test search with combined filters"""
+        result = self.inventory.search_sweets(
+            name="chocolate",
+            category="Chocolate",
+            min_price=3.00
+        )
+        self.assertEqual(len(result), 1)
+        self.assertIn(self.sweet2, result)
+
+    def test_search_no_matches(self):
+        """Test search that returns no matches"""
+        result = self.inventory.search_sweets(name="Non-existent Sweet")
+        self.assertEqual(len(result), 0)
+
+    def test_search_invalid_price_range(self):
+        """Test search with invalid price range raises ValueError"""
+        with self.assertRaises(ValueError):
+            self.inventory.search_sweets(min_price=5.00, max_price=1.00)
+
+    def test_search_with_none_values(self):
+        """Test search handles None values correctly"""
+        result = self.inventory.search_sweets(name=None, category="Gummies")
+        self.assertEqual(len(result), 2)
+        self.assertIn(self.sweet3, result)
+        self.assertIn(self.sweet4, result)
 
 if __name__ == '__main__':
     unittest.main()
