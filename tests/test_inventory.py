@@ -357,5 +357,64 @@ class TestInventorySortSweets(unittest.TestCase):
         # Original inventory should remain unchanged
         self.assertEqual(self.inventory.sweets, original_sweets)
 
+class TestInventoryPurchaseSweet(unittest.TestCase):
+    """Test cases for Inventory.purchase_sweet() method"""
+
+    def setUp(self):
+        """Set up test inventory with sample sweets"""
+        self.inventory = Inventory()
+        
+        # Add test sweets
+        self.sweet1 = Sweet(id=1, name="Chocolate Bar", category="Chocolate", price=2.99, quantity=50)
+        self.sweet2 = Sweet(id=2, name="Gummy Bears", category="Gummies", price=1.99, quantity=100)
+        
+        self.inventory.add_sweet(self.sweet1)
+        self.inventory.add_sweet(self.sweet2)
+
+    def test_purchase_valid_quantity(self):
+        """Test purchasing with valid quantity reduces stock"""
+        initial_quantity = self.sweet1.quantity
+        purchase_qty = 10
+        
+        self.inventory.purchase_sweet(self.sweet1.id, purchase_qty)
+        
+        self.assertEqual(self.sweet1.quantity, initial_quantity - purchase_qty)
+        self.assertEqual(self.sweet2.quantity, 100)  # Other sweet unchanged
+
+    def test_purchase_non_existent_sweet(self):
+        """Test purchasing non-existent sweet raises KeyError"""
+        with self.assertRaises(KeyError) as context:
+            self.inventory.purchase_sweet(999, 5)
+        self.assertEqual(str(context.exception), "Sweet not found.")
+
+    def test_purchase_insufficient_stock(self):
+        """Test purchasing more than available raises ValueError"""
+        with self.assertRaises(ValueError) as context:
+            self.inventory.purchase_sweet(self.sweet1.id, 100)
+        self.assertEqual(str(context.exception), "Not enough stock.")
+
+    def test_purchase_exact_quantity(self):
+        """Test purchasing exact quantity reduces stock to 0"""
+        self.inventory.purchase_sweet(self.sweet1.id, self.sweet1.quantity)
+        self.assertEqual(self.sweet1.quantity, 0)
+
+    def test_purchase_zero_quantity(self):
+        """Test purchasing 0 quantity raises ValueError"""
+        with self.assertRaises(ValueError) as context:
+            self.inventory.purchase_sweet(self.sweet1.id, 0)
+        self.assertEqual(str(context.exception), "Quantity must be positive.")
+
+    def test_purchase_negative_quantity(self):
+        """Test purchasing negative quantity raises ValueError"""
+        with self.assertRaises(ValueError) as context:
+            self.inventory.purchase_sweet(self.sweet1.id, -5)
+        self.assertEqual(str(context.exception), "Quantity must be positive.")
+
+    def test_purchase_maintains_other_sweets(self):
+        """Test purchasing doesn't affect other sweets"""
+        initial_sweet2_qty = self.sweet2.quantity
+        self.inventory.purchase_sweet(self.sweet1.id, 10)
+        self.assertEqual(self.sweet2.quantity, initial_sweet2_qty)
+
 if __name__ == '__main__':
     unittest.main()
