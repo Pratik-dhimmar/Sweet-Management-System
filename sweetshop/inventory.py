@@ -25,3 +25,26 @@ class Inventory:
             raise ValueError("Sweet ID already exists.")
             
         self.sweets.append(sweet)
+
+    def delete_sweet(self, sweet_id: int):
+        """
+        Remove a sweet from inventory by its ID.
+        
+        Args:
+            sweet_id: ID of the sweet to remove
+            
+        Raises:
+            KeyError: If sweet with given ID is not found
+            TypeError: If sweet_id is not an integer
+        """
+        if not isinstance(sweet_id, int):
+            raise TypeError("Sweet ID must be an integer")
+            
+        for i, sweet in enumerate(self.sweets):
+            if sweet.id == sweet_id:
+                del self.sweets[i]
+                return
+        
+        raise KeyError("Sweet not found.")
+
+    
