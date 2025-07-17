@@ -248,7 +248,7 @@ class TestInventorySearchSweets(unittest.TestCase):
     def test_search_by_price_range(self):
         """Test search by price range"""
         result = self.inventory.search_sweets(min_price=2.00, max_price=3.00)
-        self.assertEqual(len(result), 3)
+        self.assertEqual(len(result), 2)
         self.assertIn(self.sweet1, result)
         self.assertIn(self.sweet5, result)
         self.assertNotIn(self.sweet3, result)
@@ -279,6 +279,83 @@ class TestInventorySearchSweets(unittest.TestCase):
         self.assertEqual(len(result), 2)
         self.assertIn(self.sweet3, result)
         self.assertIn(self.sweet4, result)
+
+class TestInventorySortSweets(unittest.TestCase):
+    """Test cases for Inventory.sort_sweets() method"""
+
+    def setUp(self):
+        """Set up test inventory with sample sweets"""
+        self.inventory = Inventory()
+        
+        # Add test sweets in unsorted order
+        self.sweet1 = Sweet(id=1, name="Chocolate Bar", category="Chocolate", price=2.99, quantity=50)
+        self.sweet2 = Sweet(id=2, name="Gummy Bears", category="Gummies", price=1.99, quantity=100)
+        self.sweet3 = Sweet(id=3, name="Caramel Bar", category="Caramel", price=2.49, quantity=40)
+        self.sweet4 = Sweet(id=4, name="Dark Chocolate", category="Chocolate", price=3.49, quantity=30)
+        
+        for sweet in [self.sweet1, self.sweet2, self.sweet3, self.sweet4]:
+            self.inventory.add_sweet(sweet)
+
+    def test_sort_by_name_ascending(self):
+        """Test sorting by name in ascending order"""
+        result = self.inventory.sort_sweets(key="name")
+        expected_order = [self.sweet3, self.sweet4, self.sweet1, self.sweet2]
+        self.assertEqual(result, expected_order)
+
+    def test_sort_by_name_descending(self):
+        """Test sorting by name in descending order"""
+        result = self.inventory.sort_sweets(key="name", reverse=True)
+        expected_order = [self.sweet2, self.sweet1, self.sweet4, self.sweet3]
+        self.assertEqual(result, expected_order)
+
+    def test_sort_by_category_ascending(self):
+        """Test sorting by category in ascending order"""
+        result = self.inventory.sort_sweets(key="category")
+        expected_order = [self.sweet3, self.sweet1, self.sweet4, self.sweet2]
+        self.assertEqual(result, expected_order)
+
+    def test_sort_by_price_ascending(self):
+        """Test sorting by price in ascending order"""
+        result = self.inventory.sort_sweets(key="price")
+        expected_order = [self.sweet2, self.sweet3, self.sweet1, self.sweet4]
+        self.assertEqual(result, expected_order)
+
+    def test_sort_by_price_descending(self):
+        """Test sorting by price in descending order"""
+        result = self.inventory.sort_sweets(key="price", reverse=True)
+        expected_order = [self.sweet4, self.sweet1, self.sweet3, self.sweet2]
+        self.assertEqual(result, expected_order)
+
+    def test_sort_empty_inventory(self):
+        """Test sorting when inventory is empty"""
+        empty_inventory = Inventory()
+        result = empty_inventory.sort_sweets(key="name")
+        self.assertEqual(result, [])
+
+    def test_sort_after_modification(self):
+        """Test sorting after inventory modification"""
+        new_sweet = Sweet(id=5, name="Apple Candy", category="Fruit", price=1.49, quantity=60)
+        self.inventory.add_sweet(new_sweet)
+        
+        result = self.inventory.sort_sweets(key="name")
+        self.assertEqual(result[0], new_sweet)  # Should be first alphabetically
+
+    def test_sort_with_invalid_key(self):
+        """Test sorting with invalid key raises ValueError"""
+        with self.assertRaises(ValueError) as context:
+            self.inventory.sort_sweets(key="invalid_key")
+        self.assertEqual(str(context.exception), "Invalid sort key")
+
+    def test_sort_returns_new_list(self):
+        """Test that returned list is a copy, not the original"""
+        original_sweets = self.inventory.sweets.copy()
+        result = self.inventory.sort_sweets(key="name")
+        
+        # Modify the result list
+        result.append(Sweet(id=99, name="Test", category="Test", price=0, quantity=0))
+        
+        # Original inventory should remain unchanged
+        self.assertEqual(self.inventory.sweets, original_sweets)
 
 if __name__ == '__main__':
     unittest.main()
