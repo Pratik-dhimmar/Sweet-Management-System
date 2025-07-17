@@ -47,4 +47,15 @@ class Inventory:
         
         raise KeyError("Sweet not found.")
 
+    """Manages inventory of sweets in the sweet shop"""
+
+    def view_all_sweets(self):
+        """
+        Return a list of all sweets in inventory.
+        
+        Returns:
+            list: A new list containing all Sweet objects in inventory.
+                  Returns empty list if inventory is empty.
+        """
+        return list(self.sweets)  # Return a copy of the list
     
