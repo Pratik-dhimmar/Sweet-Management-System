@@ -101,5 +101,32 @@ class Inventory:
         
         return results
 
+    def sort_sweets(self, key: str, reverse: bool = False) -> List[Sweet]:
+        """
+        Return a sorted list of sweets based on the specified key.
+        
+        Args:
+            key: Attribute to sort by ("name", "category", or "price")
+            reverse: If True, sort in descending order
+            
+        Returns:
+            New list of Sweet objects in sorted order
+            
+        Raises:
+            ValueError: If key is not one of the supported sort keys
+        """
+        valid_keys = {"name", "category", "price"}
+        if key not in valid_keys:
+            raise ValueError("Invalid sort key")
+            
+        # Create a new sorted list without modifying the original
+        return sorted(
+            self.sweets,
+            key=lambda sweet: getattr(sweet, key),
+            reverse=reverse
+        )
+
+
+
 if __name__ == '__main__':
     pass
