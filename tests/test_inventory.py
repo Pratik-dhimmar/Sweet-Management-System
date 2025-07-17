@@ -102,7 +102,7 @@ class TestInventoryDeleteSweet(unittest.TestCase):
         """Set up fresh inventory with test data for each test"""
         self.inventory = Inventory()
         
-        Add some test sweets
+        # Add some test sweets
         self.sweet1 = Sweet(id=1, name="Chocolate Bar", category="Chocolate", price=2.99, quantity=50)
         self.sweet2 = Sweet(id=2, name="Gummy Bears", category="Gummies", price=1.49, quantity=100)
         
@@ -123,7 +123,7 @@ class TestInventoryDeleteSweet(unittest.TestCase):
         with self.assertRaises(KeyError) as context:
             self.inventory.delete_sweet(999)
         
-        self.assertEqual(str(context.exception), "Sweet not found.")
+        self.assertEqual(str(context.exception), "'Sweet not found.'")
 
     def test_delete_twice(self):
         """Test deleting a sweet then trying to delete it again"""
@@ -132,7 +132,7 @@ class TestInventoryDeleteSweet(unittest.TestCase):
         with self.assertRaises(KeyError) as context:
             self.inventory.delete_sweet(1)
         
-        self.assertEqual(str(context.exception), "Sweet not found.")
+        self.assertEqual(str(context.exception), "'Sweet not found.'")
 
     def test_delete_after_add(self):
         """Test sequence of add and delete operations"""
