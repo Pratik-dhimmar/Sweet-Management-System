@@ -458,7 +458,16 @@ class TestInventoryRestockSweet(unittest.TestCase):
             self.inventory.restock_sweet(self.sweet1.id, -5)
         self.assertEqual(str(context.exception), "Invalid restock quantity.")
 
-   
+    def test_multiple_restocks(self):
+        """Test multiple restocks accumulate correctly"""
+        self.inventory.restock_sweet(self.sweet1.id, 10)
+        self.assertEqual(self.sweet1.quantity, 60)
+        
+        self.inventory.restock_sweet(self.sweet1.id, 20)
+        self.assertEqual(self.sweet1.quantity, 80)
+        
+        self.inventory.restock_sweet(self.sweet1.id, 5)
+        self.assertEqual(self.sweet1.quantity, 85)
 
     def test_restock_maintains_other_sweets(self):
         """Test restocking doesn't affect other sweets"""
