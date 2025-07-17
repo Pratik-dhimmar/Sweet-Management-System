@@ -90,11 +90,6 @@ class TestInventoryAddSweet(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.inventory.add_sweet("not a sweet object")
 
-
-# if __name__ == '__main__':
-#     unittest.main()
-
-
 class TestInventoryDeleteSweet(unittest.TestCase):
     """Test cases for Inventory.delete_sweet() method"""
 
@@ -149,6 +144,64 @@ class TestInventoryDeleteSweet(unittest.TestCase):
         """Test deleting with invalid ID type (not integer)"""
         with self.assertRaises(TypeError):
             self.inventory.delete_sweet("not_an_integer")
+
+class TestInventoryViewAllSweets(unittest.TestCase):
+    """Test cases for Inventory.view_all_sweets() method"""
+
+    def setUp(self):
+        """Set up fresh inventory for each test"""
+        self.inventory = Inventory()
+        self.sweet1 = Sweet(
+            id=1,
+            name="Chocolate Bar",
+            category="Chocolate",
+            price=2.99,
+            quantity=50
+        )
+        self.sweet2 = Sweet(
+            id=2,
+            name="Gummy Bears",
+            category="Gummies",
+            price=1.49,
+            quantity=100
+        )
+
+    def test_view_all_when_empty(self):
+        """Test viewing all sweets when inventory is empty"""
+        result = self.inventory.view_all_sweets()
+        self.assertEqual(result, [])
+        self.assertEqual(len(result), 0)
+
+    def test_view_all_after_adding_sweets(self):
+        """Test viewing all sweets after adding multiple sweets"""
+        self.inventory.add_sweet(self.sweet1)
+        self.inventory.add_sweet(self.sweet2)
+        
+        result = self.inventory.view_all_sweets()
+        self.assertEqual(len(result), 2)
+        self.assertIn(self.sweet1, result)
+        self.assertIn(self.sweet2, result)
+
+    def test_view_all_after_deletion(self):
+        """Test viewing all sweets after some deletions"""
+        self.inventory.add_sweet(self.sweet1)
+        self.inventory.add_sweet(self.sweet2)
+        self.inventory.delete_sweet(1)  # Delete sweet1
+        
+        result = self.inventory.view_all_sweets()
+        self.assertEqual(len(result), 1)
+        self.assertNotIn(self.sweet1, result)
+        self.assertIn(self.sweet2, result)
+
+    def test_view_all_returns_new_list(self):
+        """Test that returned list is a copy, not the original"""
+        self.inventory.add_sweet(self.sweet1)
+        original_list = self.inventory.view_all_sweets()
+        original_list.append(self.sweet2)  # Should not affect inventory
+        
+        self.assertEqual(len(self.inventory.view_all_sweets()), 1)
+        self.assertNotIn(self.sweet2, self.inventory.view_all_sweets())
+
 
 
 if __name__ == '__main__':
