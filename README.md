@@ -86,9 +86,17 @@ python -m unittest discover
 ## 🧪 Run Manually (Interactive Mode)
 
 To try the system interactively:
-
-```bash
 python main.py
+
+## ✅ Test Report
+
+All unit tests were run using Python's built-in `unittest` module.
+✔️ 100% Test Pass
+45 test cases covering all operations
+Edge cases handled: duplicate IDs, insufficient stock, invalid inputs, empty inventory, etc.
+
+Test output available in test_report.txt
+
 
 ## 🧼 Clean Code Practices
 
